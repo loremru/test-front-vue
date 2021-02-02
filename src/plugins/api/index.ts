@@ -1,5 +1,5 @@
 import { useCurrentUserSubscription } from '@/sdk/hooks'
-import { GetCurrentUserDocument } from '@/sdk/operations'
+import { GetCurrentUserDocument, CreateNewsDocument } from '@/sdk/operations'
 import {
   CurrentUserFragment,
   GetCurrentUserQuery,
@@ -166,6 +166,20 @@ export const loadUser = async () => {
       if (data.user) currentUser.value = data.user
     }
   } catch (err) {
+    config.graphqlErrorHandler(err)
+  }
+}
+
+export const createNews = async (title: string, content: string) => {
+  try {
+    return await apolloClient.mutate({
+      mutation: CreateNewsDocument,
+      variables: {
+        news: { title, content }
+      }
+    })
+  } catch (err) {
+    console.log(err)
     config.graphqlErrorHandler(err)
   }
 }

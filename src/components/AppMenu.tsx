@@ -3,7 +3,8 @@ import {
   AreaChartOutlined,
   SubnodeOutlined,
   TeamOutlined,
-  BookFilled
+  BookFilled,
+  PlusSquareFilled
 } from '@ant-design/icons-vue'
 import { Menu } from 'ant-design-vue'
 import { computed, defineComponent } from 'vue'
@@ -45,6 +46,11 @@ export default defineComponent({
         <Menu.Item key="/news">
           <BookFilled />
           <span>Новости</span>
+        </Menu.Item>
+
+        <Menu.Item key="/news/create">
+          <PlusSquareFilled />
+          <span>Создать новость</span>
         </Menu.Item>
       </Menu>
     )

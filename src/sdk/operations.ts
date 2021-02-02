@@ -47,6 +47,17 @@ export const UpdateCurrentUserDocument = gql`
   ${CurrentUserFragment}
   ${UserAccountFragment}
 `
+
+export const CreateNewsDocument = gql`
+  mutation createNews($news: news_insert_input!) {
+    insert_news(objects: [$news]) {
+      returning {
+        id
+      }
+    }
+  }
+`
+
 export const GetCurrentUserDocument = gql`
   query getCurrentUser($userId: uuid!) {
     user: users_by_pk(id: $userId) {
