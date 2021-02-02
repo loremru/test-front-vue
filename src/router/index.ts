@@ -64,6 +64,16 @@ const routes: Array<RouteRecordRaw> = [
     name: 'NotFound',
     component: () =>
       import(/* webpackChunkName: "not-found" */ '../views/NotFound')
+  },
+
+  {
+    path: '/news',
+    name: 'News',
+    component: () =>
+      import(/* webpackChunkName: "news" */ '../views/news/Index'),
+    meta: {
+      menu: '/news'
+    }
   }
 ]
 
