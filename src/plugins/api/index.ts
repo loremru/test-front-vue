@@ -1,5 +1,5 @@
 import { useCurrentUserSubscription } from '@/sdk/hooks'
-import { GetCurrentUserDocument, CreateNewsDocument } from '@/sdk/operations'
+import { GetCurrentUserDocument } from '@/sdk/operations'
 import {
   CurrentUserFragment,
   GetCurrentUserQuery,
@@ -33,7 +33,7 @@ export type ApiConfig = {
   graphqlErrorHandler: ErrorHandler
 }
 
-const config: ApiConfig = {
+export const config: ApiConfig = {
   apiBaseUrl: process.env.VUE_APP_BASE_URL || '',
   graphqlEndpoint: process.env.VUE_APP_GRAPHQL_ENDPOINT || '',
   graphqlWsEndpoint: process.env.VUE_APP_GRAPHQL_SOCKET_ENDPOINT || '',
@@ -170,20 +170,6 @@ export const loadUser = async () => {
   }
 }
 
-export const createNews = async (title: string, content: string) => {
-  try {
-    return await apolloClient.mutate({
-      mutation: CreateNewsDocument,
-      variables: {
-        news: { title, content }
-      }
-    })
-  } catch (err) {
-    console.log(err)
-    config.graphqlErrorHandler(err)
-  }
-}
-
 export const subscribeToCurrentUser = () => {
   const options = computed(() => ({
     enabled: auth.isAuth.value
@@ -200,4 +186,4 @@ export const subscribeToCurrentUser = () => {
   })
 }
 
-export default { auth, storage }
+export default { auth, storage, apolloClient, config }

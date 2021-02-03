@@ -260,7 +260,7 @@ type auth_account_roles {
   account_id: uuid!
   created_at: timestamptz!
   id: uuid!
-  role: String!
+  role: auth_roles_enum!
 
   """An object relationship"""
   roleByRole: auth_roles!
@@ -311,7 +311,7 @@ input auth_account_roles_bool_exp {
   account_id: uuid_comparison_exp
   created_at: timestamptz_comparison_exp
   id: uuid_comparison_exp
-  role: String_comparison_exp
+  role: auth_roles_enum_comparison_exp
   roleByRole: auth_roles_bool_exp
 }
 
@@ -334,7 +334,7 @@ input auth_account_roles_insert_input {
   account_id: uuid
   created_at: timestamptz
   id: uuid
-  role: String
+  role: auth_roles_enum
   roleByRole: auth_roles_obj_rel_insert_input
 }
 
@@ -343,7 +343,6 @@ type auth_account_roles_max_fields {
   account_id: uuid
   created_at: timestamptz
   id: uuid
-  role: String
 }
 
 """
@@ -353,7 +352,6 @@ input auth_account_roles_max_order_by {
   account_id: order_by
   created_at: order_by
   id: order_by
-  role: order_by
 }
 
 """aggregate min on columns"""
@@ -361,7 +359,6 @@ type auth_account_roles_min_fields {
   account_id: uuid
   created_at: timestamptz
   id: uuid
-  role: String
 }
 
 """
@@ -371,7 +368,6 @@ input auth_account_roles_min_order_by {
   account_id: order_by
   created_at: order_by
   id: order_by
-  role: order_by
 }
 
 """
@@ -445,7 +441,7 @@ input auth_account_roles_set_input {
   account_id: uuid
   created_at: timestamptz
   id: uuid
-  role: String
+  role: auth_roles_enum
 }
 
 """
@@ -546,7 +542,7 @@ type auth_accounts {
     """JSON select path"""
     path: String
   ): jsonb
-  default_role: String!
+  default_role: auth_roles_enum!
   email: citext
   firebase_uid: String
   id: uuid!
@@ -655,7 +651,7 @@ input auth_accounts_bool_exp {
   active: Boolean_comparison_exp
   created_at: timestamptz_comparison_exp
   custom_register_data: jsonb_comparison_exp
-  default_role: String_comparison_exp
+  default_role: auth_roles_enum_comparison_exp
   email: citext_comparison_exp
   firebase_uid: String_comparison_exp
   id: uuid_comparison_exp
@@ -722,7 +718,7 @@ input auth_accounts_insert_input {
   active: Boolean
   created_at: timestamptz
   custom_register_data: jsonb
-  default_role: String
+  default_role: auth_roles_enum
   email: citext
   firebase_uid: String
   id: uuid
@@ -744,7 +740,6 @@ input auth_accounts_insert_input {
 """aggregate max on columns"""
 type auth_accounts_max_fields {
   created_at: timestamptz
-  default_role: String
   email: citext
   firebase_uid: String
   id: uuid
@@ -763,7 +758,6 @@ order by max() on columns of table "auth.accounts"
 """
 input auth_accounts_max_order_by {
   created_at: order_by
-  default_role: order_by
   email: order_by
   firebase_uid: order_by
   id: order_by
@@ -780,7 +774,6 @@ input auth_accounts_max_order_by {
 """aggregate min on columns"""
 type auth_accounts_min_fields {
   created_at: timestamptz
-  default_role: String
   email: citext
   firebase_uid: String
   id: uuid
@@ -799,7 +792,6 @@ order by min() on columns of table "auth.accounts"
 """
 input auth_accounts_min_order_by {
   created_at: order_by
-  default_role: order_by
   email: order_by
   firebase_uid: order_by
   id: order_by
@@ -944,7 +936,7 @@ input auth_accounts_set_input {
   active: Boolean
   created_at: timestamptz
   custom_register_data: jsonb
-  default_role: String
+  default_role: auth_roles_enum
   email: citext
   firebase_uid: String
   id: uuid
@@ -1546,6 +1538,22 @@ enum auth_roles_constraint {
   roles_pkey
 }
 
+enum auth_roles_enum {
+  anonymous
+  user
+}
+
+"""
+expression to compare columns of type auth_roles_enum. All fields are combined with logical 'AND'.
+"""
+input auth_roles_enum_comparison_exp {
+  _eq: auth_roles_enum
+  _in: [auth_roles_enum!]
+  _is_null: Boolean
+  _neq: auth_roles_enum
+  _nin: [auth_roles_enum!]
+}
+
 """
 input type for inserting data into table "auth.roles"
 """
@@ -1796,6 +1804,19 @@ type mutation_root {
   delete_auth_roles_by_pk(role: String!): auth_roles
 
   """
+  delete data from the table: "news"
+  """
+  delete_news(
+    """filter the rows which have to be deleted"""
+    where: news_bool_exp!
+  ): news_mutation_response
+
+  """
+  delete single row from the table: "news"
+  """
+  delete_news_by_pk(id: uuid!): news
+
+  """
   delete data from the table: "users"
   """
   delete_users(
@@ -1939,6 +1960,28 @@ type mutation_root {
     """on conflict condition"""
     on_conflict: auth_roles_on_conflict
   ): auth_roles
+
+  """
+  insert data into the table: "news"
+  """
+  insert_news(
+    """the rows to be inserted"""
+    objects: [news_insert_input!]!
+
+    """on conflict condition"""
+    on_conflict: news_on_conflict
+  ): news_mutation_response
+
+  """
+  insert a single row into the table: "news"
+  """
+  insert_news_one(
+    """the row to be inserted"""
+    object: news_insert_input!
+
+    """on conflict condition"""
+    on_conflict: news_on_conflict
+  ): news
 
   """
   insert data into the table: "users"
@@ -2127,6 +2170,26 @@ type mutation_root {
   ): auth_roles
 
   """
+  update data of the table: "news"
+  """
+  update_news(
+    """sets the columns of the filtered rows to the given values"""
+    _set: news_set_input
+
+    """filter the rows which have to be updated"""
+    where: news_bool_exp!
+  ): news_mutation_response
+
+  """
+  update single row of the table: "news"
+  """
+  update_news_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: news_set_input
+    pk_columns: news_pk_columns_input!
+  ): news
+
+  """
   update data of the table: "users"
   """
   update_users(
@@ -2145,6 +2208,228 @@ type mutation_root {
     _set: users_set_input
     pk_columns: users_pk_columns_input!
   ): users
+}
+
+"""
+Новости
+
+
+columns and relationships of "news"
+
+"""
+type news {
+  """Содержание новости"""
+  content: String!
+  created_at: timestamptz!
+  id: uuid!
+
+  """Заголовок новости"""
+  title: String!
+  updated_at: timestamptz!
+}
+
+"""
+aggregated selection of "news"
+"""
+type news_aggregate {
+  aggregate: news_aggregate_fields
+  nodes: [news!]!
+}
+
+"""
+aggregate fields of "news"
+"""
+type news_aggregate_fields {
+  count(columns: [news_select_column!], distinct: Boolean): Int
+  max: news_max_fields
+  min: news_min_fields
+}
+
+"""
+order by aggregate values of table "news"
+"""
+input news_aggregate_order_by {
+  count: order_by
+  max: news_max_order_by
+  min: news_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "news"
+"""
+input news_arr_rel_insert_input {
+  data: [news_insert_input!]!
+  on_conflict: news_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "news". All fields are combined with a logical 'AND'.
+"""
+input news_bool_exp {
+  _and: [news_bool_exp]
+  _not: news_bool_exp
+  _or: [news_bool_exp]
+  content: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  title: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "news"
+"""
+enum news_constraint {
+  """unique or primary key constraint"""
+  news_pkey
+}
+
+"""
+input type for inserting data into table "news"
+"""
+input news_insert_input {
+  content: String
+  created_at: timestamptz
+  id: uuid
+  title: String
+  updated_at: timestamptz
+}
+
+"""aggregate max on columns"""
+type news_max_fields {
+  content: String
+  created_at: timestamptz
+  id: uuid
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+order by max() on columns of table "news"
+"""
+input news_max_order_by {
+  content: order_by
+  created_at: order_by
+  id: order_by
+  title: order_by
+  updated_at: order_by
+}
+
+"""aggregate min on columns"""
+type news_min_fields {
+  content: String
+  created_at: timestamptz
+  id: uuid
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+order by min() on columns of table "news"
+"""
+input news_min_order_by {
+  content: order_by
+  created_at: order_by
+  id: order_by
+  title: order_by
+  updated_at: order_by
+}
+
+"""
+response of any mutation on the table "news"
+"""
+type news_mutation_response {
+  """number of affected rows by the mutation"""
+  affected_rows: Int!
+
+  """data of the affected rows by the mutation"""
+  returning: [news!]!
+}
+
+"""
+input type for inserting object relation for remote table "news"
+"""
+input news_obj_rel_insert_input {
+  data: news_insert_input!
+  on_conflict: news_on_conflict
+}
+
+"""
+on conflict condition type for table "news"
+"""
+input news_on_conflict {
+  constraint: news_constraint!
+  update_columns: [news_update_column!]!
+  where: news_bool_exp
+}
+
+"""
+ordering options when selecting data from "news"
+"""
+input news_order_by {
+  content: order_by
+  created_at: order_by
+  id: order_by
+  title: order_by
+  updated_at: order_by
+}
+
+"""
+primary key columns input for table: "news"
+"""
+input news_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "news"
+"""
+enum news_select_column {
+  """column name"""
+  content
+
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  title
+
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "news"
+"""
+input news_set_input {
+  content: String
+  created_at: timestamptz
+  id: uuid
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+update columns of table "news"
+"""
+enum news_update_column {
+  """column name"""
+  content
+
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  title
+
+  """column name"""
+  updated_at
 }
 
 """column ordering options"""
@@ -2433,6 +2718,49 @@ type query_root {
 
   """fetch data from the table: "auth.roles" using primary key columns"""
   auth_roles_by_pk(role: String!): auth_roles
+
+  """
+  fetch data from the table: "news"
+  """
+  news(
+    """distinct select on columns"""
+    distinct_on: [news_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [news_order_by!]
+
+    """filter the rows returned"""
+    where: news_bool_exp
+  ): [news!]!
+
+  """
+  fetch aggregated fields from the table: "news"
+  """
+  news_aggregate(
+    """distinct select on columns"""
+    distinct_on: [news_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [news_order_by!]
+
+    """filter the rows returned"""
+    where: news_bool_exp
+  ): news_aggregate!
+
+  """fetch data from the table: "news" using primary key columns"""
+  news_by_pk(id: uuid!): news
 
   """
   fetch data from the table: "users"
@@ -2764,6 +3092,49 @@ type subscription_root {
 
   """fetch data from the table: "auth.roles" using primary key columns"""
   auth_roles_by_pk(role: String!): auth_roles
+
+  """
+  fetch data from the table: "news"
+  """
+  news(
+    """distinct select on columns"""
+    distinct_on: [news_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [news_order_by!]
+
+    """filter the rows returned"""
+    where: news_bool_exp
+  ): [news!]!
+
+  """
+  fetch aggregated fields from the table: "news"
+  """
+  news_aggregate(
+    """distinct select on columns"""
+    distinct_on: [news_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [news_order_by!]
+
+    """filter the rows returned"""
+    where: news_bool_exp
+  ): news_aggregate!
+
+  """fetch data from the table: "news" using primary key columns"""
+  news_by_pk(id: uuid!): news
 
   """
   fetch data from the table: "users"

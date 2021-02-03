@@ -1,7 +1,7 @@
 import { defineComponent, reactive } from 'vue'
 import { Button, Form, Input, Space } from 'ant-design-vue'
 import { FormRules } from '@/types'
-import { createNews } from '@/plugins/api'
+import createNews from '@/plugins/api/news'
 
 export default defineComponent({
   setup() {
@@ -32,10 +32,12 @@ export default defineComponent({
     const onSubmit = async (data: typeof formData) => {
       formData.loading = true
       try {
-        const id = await createNews(formData.title, formData.content)
+        const id = await createNews(data.title, data.content)
         console.log(id)
       } finally {
         formData.loading = false
+        formData.title = ''
+        formData.content = ''
       }
     }
 
@@ -57,7 +59,7 @@ export default defineComponent({
               v-model={[formData.title, 'value']}
             />
           </Form.Item>
-          <Form.Item label="Текс" name="content">
+          <Form.Item label="Текст" name="content">
             <Input.TextArea
               placeholder="Введите текст новости"
               size="large"

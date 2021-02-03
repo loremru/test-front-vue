@@ -7,6 +7,46 @@ import * as VueCompositionApi from 'vue'
 export type ReactiveFunction<TParam> = () => TParam
 
 /**
+ * __useCreateNewsMutation__
+ *
+ * To run a mutation, you first call `useCreateNewsMutation` within a Vue component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewsMutation` returns an object that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - Several other properties: https://v4.apollo.vuejs.org/api/use-mutation.html#return
+ *
+ * @param options that will be passed into the mutation, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/mutation.html#options;
+ *
+ * @example
+ * const { mutate, loading, error, onDone } = useCreateNewsMutation({
+ *   variables: {
+ *      news: // value for 'news'
+ *   },
+ * });
+ */
+export function useCreateNewsMutation(
+  options:
+    | VueApolloComposable.UseMutationOptions<
+        Types.CreateNewsMutation,
+        Types.CreateNewsMutationVariables
+      >
+    | ReactiveFunction<
+        VueApolloComposable.UseMutationOptions<
+          Types.CreateNewsMutation,
+          Types.CreateNewsMutationVariables
+        >
+      >
+) {
+  return VueApolloComposable.useMutation<
+    Types.CreateNewsMutation,
+    Types.CreateNewsMutationVariables
+  >(Operations.CreateNewsDocument, options)
+}
+export type CreateNewsMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<
+  Types.CreateNewsMutation,
+  Types.CreateNewsMutationVariables
+>
+
+/**
  * __useUpdateCurrentUserMutation__
  *
  * To run a mutation, you first call `useUpdateCurrentUserMutation` within a Vue component and pass it any options that fit your needs.

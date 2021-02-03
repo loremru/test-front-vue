@@ -1,0 +1,7 @@
+mutation createNews($news: news_insert_input!) {
+    insert_news(objects: [$news]) {
+        returning {
+            id
+        }
+    }
+}
