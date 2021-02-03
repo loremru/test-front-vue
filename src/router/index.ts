@@ -84,6 +84,13 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       menu: '/news/create'
     }
+  },
+
+  {
+    path: '/news/:id',
+    name: 'NewsPage',
+    component: () =>
+      import(/* webpackChunkName: "create" */ '../views/news/NewsPage')
   }
 ]
 

@@ -1,5 +1,7 @@
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, onMounted } from 'vue'
 import { Table } from 'ant-design-vue'
+import { getNews } from '@/plugins/api/news'
+import router from '@/router'
 
 export default defineComponent({
   setup() {
@@ -16,24 +18,26 @@ export default defineComponent({
           key: 'date'
         }
       ],
-      data: [
-        {
-          key: '1',
-          title: 'Выполнено тестовое задание!!!',
-          date: '04.02.2021'
-        },
-        {
-          key: '2',
-          title: 'Сегодня 5 февраля!',
-          date: '05.02.2021'
-        },
-        {
-          key: '3',
-          title: 'ыыыы',
-          date: '06.02.2021'
-        }
-      ],
+      data: [],
       loading: true
+    })
+
+    onMounted(async () => {
+      const tableContent = await getNews()
+      if (tableContent) {
+        newsData.data = tableContent.data.news.map(
+          (el: {
+            title: string
+            id: string
+            created_at: string | number | Date
+          }) => ({
+            title: el.title,
+            key: el.id,
+            date: new Date(el.created_at).toDateString()
+          })
+        )
+        newsData.loading = false
+      }
     })
 
     return () => (
@@ -45,7 +49,10 @@ export default defineComponent({
           dataSource={newsData.data}
           loading={newsData.loading}
           scroll={{ x: 800 }}
-        ></Table>
+          onRowClick={el => {
+            router.push(`/news/${el.key}`)
+          }}
+        />
       </>
     )
   }

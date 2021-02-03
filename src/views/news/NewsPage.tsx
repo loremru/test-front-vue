@@ -1,11 +1,17 @@
-import { defineComponent, reactive } from 'vue'
-import { Button, Form, Input, Space } from 'ant-design-vue'
-import { FormRules } from '@/types'
-import { createNews } from '@/plugins/api/news'
+import { defineComponent, onMounted, reactive } from 'vue'
 import router from '@/router'
+import { getCurrentNews, updateCurrentNews } from '@/plugins/api/news'
+import { FormRules } from '@/types'
+import { Button, Form, Input, Space } from 'ant-design-vue'
 
 export default defineComponent({
   setup() {
+    const newsData = reactive({
+      title: '',
+      content: '',
+      id: router.currentRoute.value.params.id
+    })
+
     const formData = reactive({
       title: '',
       content: '',
@@ -30,22 +36,43 @@ export default defineComponent({
       ]
     }
 
+    onMounted(async () => {
+      let currentNews = await getCurrentNews(newsData.id)
+      if (currentNews) {
+        currentNews = currentNews.data.news_by_pk
+        // @ts-ignore
+        newsData.title = currentNews.title
+        // @ts-ignore
+        newsData.content = currentNews.content
+        formData.title = newsData.title
+        formData.content = newsData.content
+      }
+    })
+
     const onSubmit = async (data: typeof formData) => {
       formData.loading = true
       try {
-        const id = await createNews(data.title, data.content)
+        const id = await updateCurrentNews(
+          // @ts-ignore
+          newsData.id,
+          data.title,
+          data.content
+        )
         console.log(id)
+        router.push('/news')
       } finally {
         formData.loading = false
-        formData.title = ''
-        formData.content = ''
       }
     }
 
     return () => (
       <>
-        <h1>Создать новость</h1>
+        <h1>{newsData.title}</h1>
+        <br />
+        <pre>{newsData.content}</pre>
 
+        <br />
+        <br />
         <Form
           model={formData}
           onFinish={onSubmit}
@@ -53,6 +80,7 @@ export default defineComponent({
           rules={rules as any}
           class="form-default"
         >
+          <h2>Редактировать новость</h2>
           <Form.Item label="Название" name="title">
             <Input
               placeholder="Введите название"
@@ -77,7 +105,7 @@ export default defineComponent({
                 loading={formData.loading}
                 size="large"
               >
-                Создать
+                Редактировать
               </Button>
             </Space>
           </Form.Item>

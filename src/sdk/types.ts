@@ -2762,6 +2762,16 @@ export type CreateNewsMutation = { __typename?: 'mutation_root' } & {
   >
 }
 
+export type UpdateNewsMutationVariables = Exact<{
+  id: Scalars['uuid']
+  title: Scalars['String']
+  content: Scalars['String']
+}>
+
+export type UpdateNewsMutation = { __typename?: 'mutation_root' } & {
+  update_news_by_pk?: Maybe<{ __typename?: 'news' } & Pick<News, 'id'>>
+}
+
 export type UpdateCurrentUserMutationVariables = Exact<{
   userId: Scalars['uuid']
   user: Users_Set_Input
@@ -2777,12 +2787,28 @@ export type UpdateCurrentUserMutation = { __typename?: 'mutation_root' } & {
   >
 }
 
+export type GetCurrentNewsQueryVariables = Exact<{
+  id: Scalars['uuid']
+}>
+
+export type GetCurrentNewsQuery = { __typename?: 'query_root' } & {
+  news_by_pk?: Maybe<{ __typename?: 'news' } & Pick<News, 'content' | 'title'>>
+}
+
 export type GetCurrentUserQueryVariables = Exact<{
   userId: Scalars['uuid']
 }>
 
 export type GetCurrentUserQuery = { __typename?: 'query_root' } & {
   user?: Maybe<{ __typename?: 'users' } & CurrentUserFragment>
+}
+
+export type GetNewsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetNewsQuery = { __typename?: 'query_root' } & {
+  news: Array<
+    { __typename?: 'news' } & Pick<News, 'title' | 'created_at' | 'id'>
+  >
 }
 
 export type CurrentUserSubscriptionVariables = Exact<{

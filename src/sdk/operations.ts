@@ -35,6 +35,16 @@ export const CreateNewsDocument = gql`
     }
   }
 `
+export const UpdateNewsDocument = gql`
+  mutation updateNews($id: uuid!, $title: String!, $content: String!) {
+    update_news_by_pk(
+      pk_columns: { id: $id }
+      _set: { title: $title, content: $content }
+    ) {
+      id
+    }
+  }
+`
 export const UpdateCurrentUserDocument = gql`
   mutation updateCurrentUser(
     $userId: uuid!
@@ -56,6 +66,14 @@ export const UpdateCurrentUserDocument = gql`
   ${CurrentUserFragment}
   ${UserAccountFragment}
 `
+export const GetCurrentNewsDocument = gql`
+  query GetCurrentNews($id: uuid!) {
+    news_by_pk(id: $id) {
+      content
+      title
+    }
+  }
+`
 export const GetCurrentUserDocument = gql`
   query getCurrentUser($userId: uuid!) {
     user: users_by_pk(id: $userId) {
@@ -63,6 +81,15 @@ export const GetCurrentUserDocument = gql`
     }
   }
   ${CurrentUserFragment}
+`
+export const GetNewsDocument = gql`
+  query getNews {
+    news {
+      title
+      created_at
+      id
+    }
+  }
 `
 export const CurrentUserDocument = gql`
   subscription currentUser($userId: uuid!) {

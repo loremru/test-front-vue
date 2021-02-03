@@ -1,0 +1,5 @@
+mutation updateNews ( $id: uuid!, $title: String!, $content: String!) {
+    update_news_by_pk(pk_columns: {id: $id}, _set: {title: $title, content: $content}) {
+        id
+    }
+}
